@@ -1,7 +1,7 @@
 # Do not add the data folder to the repository
 #########
 /data/
-#/r/plots/
-#/py/Outputs/
-#/results/Derived/
+/r/plots/
+/py/Outputs/
+/results/Derived/
 #/py/RandomTestLabelsForIterations/
