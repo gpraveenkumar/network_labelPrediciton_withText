@@ -172,8 +172,8 @@ def constructFeatures(label,trainingLabels,corpus1,corpus2=None):
 
 	#print "features complete....."
 
-	for w in wordFrequency.most_common(len(wordFrequency)):
-		print w,wordFrequency[w]
+	#for w in wordFrequency.most_common(len(wordFrequency)):
+	#	print w,wordFrequency[w]
 
 	return features
 
@@ -191,7 +191,7 @@ def combineFeatures(features1,features2):
 
 
 
-def basicModel(originalLabels,trainingLabels,nodeAttributes,features=None):
+def basicModel(originalLabels,trainingLabels,testingLabels,nodeAttributes,features=None):
 	trainLabels = []
 	trainFeatures = []
 	testFeatures = []
@@ -204,7 +204,7 @@ def basicModel(originalLabels,trainingLabels,nodeAttributes,features=None):
 		if i in trainingLabels:
 			trainLabels.append( originalLabels[i] )
 			trainFeatures.append( l )
-		else:
+		elif i in testingLabels:
 			testLabels.append( originalLabels[i] )
 			testFeatures.append( l )
 
@@ -254,7 +254,7 @@ arg1 = sys.argv[1]
 trainingSizeList = [ float(arg1) ]
 
 
-useSexAsLabel = True
+useSexAsLabel = False
 if useSexAsLabel == True:
 	identifier = "sex"
 	print "Using 'Sex' as prediction label"
@@ -292,11 +292,11 @@ for trainingSize in trainingSizeList:
 	b3 = []
 	b4 = []
 
-	for i in range(1):
+	for i in range(10):
 		print "\nRepetition No.:",i+1
 
-		# Uncomment the first line to generate random testLables for each iteration
-		# Uncomment the second line to read the generated random testLables for each iteration. Based on Jen's suggestion to keep the testLabels constant across iterations.
+		# Uncomment the first line to generate random testLabels for each iteration
+		# Uncomment the second line to read the generated random testLabels for each iteration. Based on Jen's suggestion to keep the testLabels constant across iterations.
 		testLabels = random.sample(label,noOfLabelsToMask)
 		#testLabels = testLabelsList[i]
 		
@@ -305,22 +305,22 @@ for trainingSize in trainingSizeList:
 		trainingLabels = random.sample(trainingLabels_temp, int(len(trainingLabels_temp)*trainingSize) )
 		#print "Start trainLabels:",len(trainingLabels)
 		print "\nJust NodeFeatures:"
-		a,p,r = basicModel(label,trainingLabels,nodeAttributes)
+		a,p,r = basicModel(label,trainingLabels,testLabels,nodeAttributes)
 		b1.append((a,p,r))
 
 		print "\nNodeFeatures + UserPosting:"
 		userPosting_features = constructFeatures(label,trainingLabels,userPosting)
-		a,p,r = basicModel(label,trainingLabels,nodeAttributes,userPosting_features)
+		a,p,r = basicModel(label,trainingLabels,testLabels,nodeAttributes,userPosting_features)
 		b2.append((a,p,r))
 
 		print "\nNodeFeatures + WallPosted:"
 		wallPosted_features = constructFeatures(label,trainingLabels,wallPosted)
-		a,p,r = basicModel(label,trainingLabels,nodeAttributes,wallPosted_features)		
+		a,p,r = basicModel(label,trainingLabels,testLabels,nodeAttributes,wallPosted_features)		
 		b3.append((a,p,r))
 
 		print "\nNodeFeatures + UserPosting + WallPosted:"
 		combinedFeatures = combineFeatures(userPosting_features,wallPosted_features)
-		a,p,r = basicModel(label,trainingLabels,nodeAttributes,combinedFeatures)
+		a,p,r = basicModel(label,trainingLabels,testLabels,nodeAttributes,combinedFeatures)
 		b4.append((a,p,r))
 		
 	op = []
